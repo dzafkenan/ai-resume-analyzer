@@ -1,11 +1,10 @@
 import streamlit as st
-import openai
 import os
+from openai import OpenAI
 
-# Load API key from Streamlit secret
-openai.api_key = os.getenv("OPENAI_API_KEY")
+# Load API key securely
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-# Streamlit UI
 st.set_page_config(page_title="Resume Analyzer", layout="centered")
 st.title("🧠 AI-Powered Resume Analyzer")
 st.write("Upload your resume (.txt) and receive GPT-powered feedback instantly.")
@@ -23,13 +22,13 @@ You are an AI resume reviewer. Analyze the following resume content for strength
 3. Suggestions to enhance clarity, tone, and relevance.
 
 Resume Content:
-\"\"\"
+"""
 {resume_text}
-\"\"\"
+"""
 """
 
         try:
-            response = openai.ChatCompletion.create(
+            response = client.chat.completions.create(
                 model="gpt-4",
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.4
