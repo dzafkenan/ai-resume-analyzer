@@ -22,9 +22,9 @@ You are an AI resume reviewer. Analyze the following resume content for strength
 3. Suggestions to enhance clarity, tone, and relevance.
 
 Resume Content:
-"""
+\"\"\"
 {resume_text}
-"""
+\"\"\"
 """
 
         try:
@@ -36,5 +36,6 @@ Resume Content:
             feedback = response.choices[0].message.content.strip()
             st.subheader("📋 Feedback")
             st.write(feedback)
+
         except Exception as e:
             st.error(f"❌ Error from OpenAI API: {e}")
