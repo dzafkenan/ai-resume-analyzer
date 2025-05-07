@@ -27,7 +27,7 @@ if uploaded_file is not None:
         with st.spinner("Analyzing..."):
             try:
                 response = client.chat.completions.create(
-                    model="gpt-4",
+                    model="gpt-3.5-turbo",
                     messages=[
                         {
                             "role": "system",
