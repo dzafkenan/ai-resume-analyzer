@@ -3,7 +3,7 @@ import os
 from openai import OpenAI
 
 # Load API key securely
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
 st.set_page_config(page_title="Resume Analyzer", layout="centered")
 st.title("🧠 AI-Powered Resume Analyzer")
