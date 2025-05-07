@@ -1,41 +1,51 @@
 import streamlit as st
-import os
 from openai import OpenAI
+import os
 
-# Load API key securely
-client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+# Load API key from Streamlit secrets
+client = OpenAI()
 
-st.set_page_config(page_title="Resume Analyzer", layout="centered")
-st.title("🧠 AI-Powered Resume Analyzer")
-st.write("Upload your resume (.txt) and receive GPT-powered feedback instantly.")
+# Set page config
+st.set_page_config(page_title="AI-Powered Resume Analyzer")
 
-uploaded_file = st.file_uploader("📄 Upload your resume (.txt)", type=["txt"])
+# Title
+st.title("📄 AI-Powered Resume Analyzer")
+st.write("Upload your resume to receive an AI-generated analysis.")
 
-if uploaded_file:
+# File uploader
+uploaded_file = st.file_uploader("Upload a .txt version of your resume", type="txt")
+
+# If a file is uploaded
+if uploaded_file is not None:
     resume_text = uploaded_file.read().decode("utf-8")
 
-    with st.spinner("Analyzing your resume..."):
-        prompt = f"""
-You are an AI resume reviewer. Analyze the following resume content for strengths and weaknesses. Provide:
-1. A brief summary of the candidate's strengths.
-2. Specific areas for improvement.
-3. Suggestions to enhance clarity, tone, and relevance.
+    st.subheader("Resume Content:")
+    st.code(resume_text, language="text")
 
-Resume Content:
-\"\"\"
-{resume_text}
-\"\"\"
-"""
-
-        try:
-            response = client.chat.completions.create(
-                model="gpt-4",
-                messages=[{"role": "user", "content": prompt}],
-                temperature=0.4
-            )
-            feedback = response.choices[0].message.content.strip()
-            st.subheader("📋 Feedback")
-            st.write(feedback)
-
-        except Exception as e:
-            st.error(f"❌ Error from OpenAI API: {e}")
+    # Analyze button
+    if st.button("Analyze Resume"):
+        with st.spinner("Analyzing..."):
+            try:
+                response = client.chat.completions.create(
+                    model="gpt-4",
+                    messages=[
+                        {
+                            "role": "system",
+                            "content": (
+                                "You are a professional career coach. Analyze the user's resume "
+                                "and provide constructive feedback on how they can improve it. "
+                                "Focus on clarity, impact, formatting, and relevance for technical roles."
+                            ),
+                        },
+                        {
+                            "role": "user",
+                            "content": resume_text,
+                        },
+                    ],
+                )
+                ai_feedback = response.choices[0].message.content
+                st.success("Analysis Complete!")
+                st.subheader("AI Feedback:")
+                st.write(ai_feedback)
+            except Exception as e:
+                st.error(f"An error occurred during analysis: {e}")
